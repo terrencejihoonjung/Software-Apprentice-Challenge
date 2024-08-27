@@ -1,3 +1,5 @@
+import Card from "./components/Card";
+
 function App() {
   return (
     <div className="h-screen">
@@ -35,13 +37,12 @@ function App() {
         </div>
 
         {/* Cards Container */}
-        <div className="w-full grid grid-cols-4 gap-4">
-          <div className="border h-72 rounded-md">hi</div>
-          <div className="border h-72 rounded-md">hi</div>
-          <div className="border h-72 rounded-md">hi</div>
-          <div className="border h-72 rounded-md">hi</div>
-          <div className="border h-72 rounded-md">hi</div>
-          <div className="border h-72 rounded-md">hi</div>
+        <div className="w-full grid grid-cols-3 gap-4">
+          <Card />
+          <Card />
+          <Card />
+          <Card />
+          <Card />
         </div>
       </div>
     </div>
