@@ -5,21 +5,71 @@ import mapAds from "./utils/mapAds";
 
 function App() {
   const [ads, setAds] = useState<Ad[]>([]);
+  const [sortBySpend, setSortBySpend] = useState<boolean>(false);
+  const [isAscending, setIsAscending] = useState<boolean>(true);
+  const [search, setSearch] = useState<string>("");
+  const [originalAds, setOriginalAds] = useState<Ad[]>([]);
 
+  // Initial Fetch
   useEffect(() => {
-    const fetchAds = async () => {
-      try {
-        const response = await fetch("http://localhost:3000/fakeDataSet");
-        const data = await response.json();
-        const mappedData = mapAds(data);
-        setAds(mappedData);
-      } catch (error) {
-        console.log("Failed to fetch ads", error);
-      }
-    };
-
     fetchAds();
   }, []);
+
+  // Listens for sorting by spend or ASC/DESC toggle
+  useEffect(() => {
+    if (sortBySpend) {
+      setAds((prevAds) => sortAds([...prevAds]));
+    }
+  }, [sortBySpend, isAscending]);
+
+  const fetchAds = async () => {
+    try {
+      const response = await fetch("http://localhost:3000/fakeDataSet");
+      const data = await response.json();
+      const mappedData = mapAds(data);
+
+      setOriginalAds(mappedData);
+      setAds(mappedData);
+      setSortBySpend(false);
+      setIsAscending(true);
+      setSearch("");
+    } catch (error) {
+      console.log("Failed to fetch ads", error);
+    }
+  };
+
+  const sortAds = (adsToSort: Ad[]): Ad[] => {
+    return adsToSort.sort((a, b) => {
+      if (isAscending) {
+        return a.spend - b.spend;
+      } else {
+        return b.spend - a.spend;
+      }
+    });
+  };
+
+  // Filters campaign name. Uses original fetched ads
+  const filterByCampaignName = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const input = e.target.value;
+    setSearch(input);
+    const filteredAds = originalAds.filter((ad) =>
+      ad.campaign.toLowerCase().includes(input.toLowerCase())
+    );
+    setAds(sortBySpend ? sortAds(filteredAds) : filteredAds);
+  };
+
+  const handleSortBySpend = () => {
+    setSortBySpend(true);
+  };
+
+  const handleSortDirectionToggle = () => {
+    if (!sortBySpend) return;
+    setIsAscending((prev) => !prev);
+  };
+
+  const handleReset = () => {
+    fetchAds();
+  };
 
   return (
     <div className="h-screen">
@@ -33,24 +83,48 @@ function App() {
           {/* Search + Filter/Sort */}
           <div className="w-full flex items-center space-x-3">
             <input
+              value={search}
+              onChange={filterByCampaignName}
               placeholder="Enter campaign name here"
               className="p-3 border w-1/4 rounded-lg"
             />
 
-            <button className="text-md font-semibold border px-4 p-3 rounded-md">
+            <button
+              onClick={handleSortBySpend}
+              className={`text-md font-semibold border px-4 p-3 rounded-md ${
+                sortBySpend && "bg-black text-white"
+              }`}
+            >
               Sort by Spend
             </button>
 
             <div className="flex items-center">
-              <button className="text-md font-semibold border px-4 py-3 rounded-md rounded-r-none">
+              <button
+                onClick={handleSortDirectionToggle}
+                className={`text-md font-semibold border px-4 py-3 rounded-md rounded-r-none ${
+                  sortBySpend && isAscending
+                    ? "bg-black text-white"
+                    : "text-black bg-white"
+                }`}
+              >
                 Asc
               </button>
-              <button className="text-md font-semibold border px-4 p-3 rounded-md rounded-l-none">
+              <button
+                onClick={handleSortDirectionToggle}
+                className={`text-md font-semibold border px-4 py-3 rounded-md rounded-l-none ${
+                  sortBySpend && !isAscending
+                    ? "bg-black text-white"
+                    : "text-black bg-white"
+                }`}
+              >
                 Desc
               </button>
             </div>
 
-            <button className="text-md font-semibold border px-4 p-3 rounded-md">
+            <button
+              onClick={handleReset}
+              className="text-md font-semibold border px-4 p-3 rounded-md"
+            >
               Reset
             </button>
           </div>
@@ -58,8 +132,13 @@ function App() {
 
         {/* Cards Container */}
         <div className="w-full grid grid-cols-3 gap-4">
-          {ads.map((ad) => {
-            return <Card key={ad.campaign + ad.adSet + ad.creative} ad={ad} />;
+          {ads.map((ad, index) => {
+            return (
+              <Card
+                key={index + ad.campaign + ad.adSet + ad.creative}
+                ad={ad}
+              />
+            );
           })}
         </div>
       </div>

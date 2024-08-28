@@ -2,9 +2,9 @@ export type Ad = {
   campaign: string;
   adSet: string;
   creative: string;
-  spend?: number;
-  impressions?: number;
-  clicks?: number;
+  spend: number;
+  impressions: number;
+  clicks: number;
   results?: number;
 };
 

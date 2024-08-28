@@ -69,14 +69,6 @@ const mapAds = (ads: FetchedAds): Ad[] => {
 
     if (matchingAd) {
       matchingAd.results = googleAd.results;
-    } else {
-      // Add Google Analytics ad that doesn't match any platform ad
-      mappedAds.push({
-        campaign: googleAd.utm_campaign,
-        adSet: googleAd.utm_medium,
-        creative: googleAd.utm_content,
-        results: googleAd.results,
-      });
     }
   });
 
