@@ -12,7 +12,7 @@ function App() {
         const response = await fetch("http://localhost:3000/fakeDataSet");
         const data = await response.json();
         const mappedData = mapAds(data);
-        console.log(mappedData);
+        setAds(mappedData);
       } catch (error) {
         console.log("Failed to fetch ads", error);
       }
@@ -24,7 +24,7 @@ function App() {
   return (
     <div className="h-screen">
       {/* Container */}
-      <div className="h-full mx-40 py-20 border">
+      <div className="h-full mx-40 py-20">
         {/* Header */}
         <div className="w-full flex flex-col space-y-4 mb-4">
           {/* Title */}
@@ -58,11 +58,9 @@ function App() {
 
         {/* Cards Container */}
         <div className="w-full grid grid-cols-3 gap-4">
-          <Card />
-          <Card />
-          <Card />
-          <Card />
-          <Card />
+          {ads.map((ad) => {
+            return <Card key={ad.campaign + ad.adSet + ad.creative} ad={ad} />;
+          })}
         </div>
       </div>
     </div>
