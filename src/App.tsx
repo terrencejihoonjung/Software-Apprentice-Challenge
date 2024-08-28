@@ -8,7 +8,6 @@ function App() {
   const [sortBySpend, setSortBySpend] = useState<boolean>(false);
   const [isAscending, setIsAscending] = useState<boolean>(true);
   const [search, setSearch] = useState<string>("");
-  const [originalAds, setOriginalAds] = useState<Ad[]>([]);
 
   // Initial Fetch
   useEffect(() => {
@@ -28,7 +27,6 @@ function App() {
       const data = await response.json();
       const mappedData = mapAds(data);
 
-      setOriginalAds(mappedData);
       setAds(mappedData);
       setSortBySpend(false);
       setIsAscending(true);
@@ -39,6 +37,7 @@ function App() {
   };
 
   const sortAds = (adsToSort: Ad[]): Ad[] => {
+    if (!sortBySpend) return adsToSort;
     return adsToSort.sort((a, b) => {
       if (isAscending) {
         return a.spend - b.spend;
@@ -48,14 +47,18 @@ function App() {
     });
   };
 
-  // Filters campaign name. Uses original fetched ads to "reset" the search
-  const filterByCampaignName = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const filteredAds =
+    search.length > 0
+      ? sortAds(
+          ads.filter((ad) =>
+            ad.campaign.toLowerCase().includes(search.toLowerCase())
+          )
+        )
+      : ads;
+
+  const handleSearchInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const input = e.target.value;
     setSearch(input);
-    const filteredAds = originalAds.filter((ad) =>
-      ad.campaign.toLowerCase().includes(input.toLowerCase())
-    );
-    setAds(sortBySpend ? sortAds(filteredAds) : filteredAds);
   };
 
   const handleSortBySpend = () => {
@@ -84,7 +87,7 @@ function App() {
           <div className="w-full flex items-center space-x-3">
             <input
               value={search}
-              onChange={filterByCampaignName}
+              onChange={handleSearchInputChange}
               placeholder="Enter campaign name here"
               className="p-3 border w-1/4 rounded-lg"
             />
@@ -132,7 +135,7 @@ function App() {
 
         {/* Cards Container */}
         <div className="w-full grid grid-cols-3 gap-4">
-          {ads.map((ad, index) => {
+          {filteredAds.map((ad, index) => {
             return (
               <Card
                 key={index + ad.campaign + ad.adSet + ad.creative}
