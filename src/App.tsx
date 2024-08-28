@@ -48,7 +48,7 @@ function App() {
     });
   };
 
-  // Filters campaign name. Uses original fetched ads
+  // Filters campaign name. Uses original fetched ads to "reset" the search
   const filterByCampaignName = (e: React.ChangeEvent<HTMLInputElement>) => {
     const input = e.target.value;
     setSearch(input);
