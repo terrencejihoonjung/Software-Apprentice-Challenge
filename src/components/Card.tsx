@@ -23,22 +23,28 @@ function Card({ ad }: CardProps) {
       {/* Metrics */}
       <div className="w-full h-3/4 grid grid-rows-2 grid-cols-2">
         {/* Spend */}
-        <div className="flex flex-col justify-end items-start">
-          <h3 className="text-md opacity-50">Spend</h3>
-          <p className="text-2xl font-bold">${ad.spend}</p>
-        </div>
+        {ad.spend && (
+          <div className="flex flex-col justify-end items-start">
+            <h3 className="text-md opacity-50">Spend</h3>
+            <p className="text-2xl font-bold">${ad.spend}</p>
+          </div>
+        )}
 
         {/* Impressions */}
-        <div className="flex flex-col justify-end items-start">
-          <h3 className="text-md opacity-50">Impressions</h3>
-          <p className="text-2xl font-bold">{ad.impressions}</p>
-        </div>
+        {ad.impressions && (
+          <div className="flex flex-col justify-end items-start">
+            <h3 className="text-md opacity-50">Impressions</h3>
+            <p className="text-2xl font-bold">{ad.impressions}</p>
+          </div>
+        )}
 
         {/* Clicks */}
-        <div className="flex flex-col justify-end items-start">
-          <h3 className="text-md opacity-50">Clicks</h3>
-          <p className="text-2xl font-bold">{ad.clicks}</p>
-        </div>
+        {ad.clicks && (
+          <div className="flex flex-col justify-end items-start">
+            <h3 className="text-md opacity-50">Clicks</h3>
+            <p className="text-2xl font-bold">{ad.clicks}</p>
+          </div>
+        )}
 
         {/* Results */}
         {ad.results && (
