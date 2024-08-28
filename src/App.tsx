@@ -1,6 +1,26 @@
 import Card from "./components/Card";
+import { useEffect, useState } from "react";
+import { Ad } from "./entities";
+import mapAds from "./utils/mapAds";
 
 function App() {
+  const [ads, setAds] = useState<Ad[]>([]);
+
+  useEffect(() => {
+    const fetchAds = async () => {
+      try {
+        const response = await fetch("http://localhost:3000/fakeDataSet");
+        const data = await response.json();
+        const mappedData = mapAds(data);
+        console.log(mappedData);
+      } catch (error) {
+        console.log("Failed to fetch ads", error);
+      }
+    };
+
+    fetchAds();
+  }, []);
+
   return (
     <div className="h-screen">
       {/* Container */}
